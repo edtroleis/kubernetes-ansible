@@ -1,0 +1,141 @@
+https://www.linuxtechi.com/how-to-install-ansible-on-ubuntu/
+
+
+https://www.osboxes.org/ubuntu/#ubuntu-22-04-jammy-info
+
+
+
+
+1. Create vms
+./virtualbox_create_vm.sh k8smaster
+./virtualbox_create_vm.sh k8sworker1
+./virtualbox_create_vm.sh k8sworker2
+./virtualbox_create_vm.sh ansible
+
+VBoxManage guestproperty enumerate <vmname>
+VBoxManage.exe guestproperty enumerate Ansible | grep IP | grep -o -w -P -e '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
+
+for f in $(VBoxManage.exe list runningvms | awk -F\" '{print $2}'); do
+  echo "$f:"
+  VBoxManage.exe guestproperty enumerate "$f" | grep IP | grep -o -w -P -e '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
+done
+
+
+
+
+# Chage uuid disk to create vms using images from osboxes
+VBoxManage internalcommands sethduuid FILE.vdi
+
+2. Configure Ansible manager
+
+# add on hosts ansible server
+10.0.2.5    k8s-01
+10.0.2.4    k8s-02
+10.0.2.15   k8s-03
+
+cat > /etc/hosts <<EOF
+
+EOF
+
+vim /etc/ansible/hosts 
+---
+[servers]
+server1 ansible_host=k8s-01
+server2 ansible_host=k8s-02
+server3 ansible_host=k8s-03
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+---
+
+---
+[masters]
+master server1 ansible_host=k8s-01 ansible_user=root
+
+[workers]
+worker1 ansible_host=k8s-02 ansible_user=root
+worker2 ansible_host=k8s-03 ansible_user=root
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+---
+
+
+
+# I have created a ssh key using command
+cd ~/.ssh
+ssh-keygen -f key_ansible
+
+# and also have added passphrase, copied the key to the server.
+ssh-copy-id -i k8s-01
+ssh-copy-id -i k8s-02
+ssh-copy-id -i k8s-03
+
+vim config
+---
+Host 10.0.2.15
+  User osboxes
+  Port 22
+  IdentityFile /home/osboxes/.ssh/key_ansible
+---
+
+# Permission of my keys:
+sudo chmod 600 config
+
+# Check the inventory
+ansible-inventory --list -y
+
+# Test connection
+ansible all -m ping
+
+# Execute playbook for 1 server
+ansible-playbook playbook.yml -l master --extra-vars "ansible_sudo_pass=osboxes.org"
+
+# Execute playbook
+ansible-playbook playbook.yml --extra-vars "ansible_sudo_pass=osboxes.org"
+
+Ansible on Ubuntu: https://www.digitalocean.com/community/tutorials/como-instalar-e-configurar-o-ansible-no-ubuntu-18-04-pt
+
+Running playbooks https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-18-04-pt
+
+Ansible playbooks https://github.com/do-community/ansible-playbooks
+
+
+# install virtualbox-guest
+1. copy image iso from C:\Program Files\Oracle\VirtualBox to vm with Ansible
+put the file in /usr/share/virtualbox/VBoxGuestAdditions.iso
+
+2. Install vbox-guest dependencies
+sudo apt-get install make gcc linux-headers-$(uname -r)
+
+3. download role
+sudo ansible-galaxy install -p /etc/ansible/roles PeterMosmans.virtualbox-guest
+
+task:
+- name: run ansible galaxy
+  local_action: command ansible-galaxy install -r requirements.yml --ignore-errors
+
+2. run ansible
+
+
+
+# solve issue "Virtualbox shared folder permissions - permission denied"
+sudo adduser $USER vboxsf
+
+
+
+
+
+- hosts: localhost
+
+  pre_tasks:
+    - shell: echo 'hello in pre'
+
+  roles:
+    - { role: some_role }
+
+  tasks:
+    - shell: echo 'in tasks'
+
+  post_tasks:
+    - shell: echo 'goodbye in post'
