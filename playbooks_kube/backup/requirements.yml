@@ -1,0 +1,3 @@
+# Install Virtualbox-guest role
+- name: opendaylight
+  src: https://github.com/PeterMosmans/ansible-role-virtualbox-guest

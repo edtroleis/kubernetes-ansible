@@ -1,0 +1,43 @@
+---
+- hosts: all
+  become: true
+
+  vars_prompt:
+
+   - name: "new_user"
+     prompt: "Account need to be create in remote server."
+     private: no
+
+  tasks:
+    - name: creating the user {{ new_user }}.
+      user:
+        name: "{{ new_user }}"
+        createhome: yes
+        shell: /bin/bash
+        append: yes
+        state: present  
+
+    - name: Create a dedicated sudo entry file for the user.
+      file:
+        path: "/etc/sudoers.d/{{ new_user }}"
+        state: touch
+        mode: '0600'
+
+    - name: "Setting up Sudo without Password for user {{ new_user }}."
+      lineinfile:
+        dest: "/etc/sudoers.d/{{ new_user }}"
+        line: '{{ new_user }}  ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Set authorized key for user copying it from current {{ new_user }}  user.
+      authorized_key:
+         user: "{{ new_user }}"
+         state: present
+         key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+    - name: Print the created user.
+      shell: id "{{ new_user }}"
+      register: new_user_created
+
+    - debug:
+        msg: "{{ new_user_created.stdout_lines[0] }}"

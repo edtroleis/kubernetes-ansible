@@ -1,0 +1,9 @@
+create_containers: 0
+default_container_name: docker
+default_container_image: nginx
+default_container_command: sleep 1d
+docker_group: docker
+k8s_user: osboxes
+pod_network_manifest_file: https://docs.projectcalico.org/v3.16/manifests/calico.yaml
+virtualbox_version: "6.1.36"
+local_virtualbox_iso: "/mnt/shared/VBoxGuestAdditions.iso"
