@@ -111,8 +111,8 @@ ansible-playbook worker-nodes.yml       # add worker nodes to cluster Kubernetes
 
 # Notes
 ```
-sudo -u k8s -s          # access k8s user
-sudo -u k8s passwd      # change password
+sudo -u k8s -s                                                                        # access k8s user
+sudo -u k8s passwd                                                                    # change password
 ansible-playbook playbook.yml -l master --extra-vars "ansible_sudo_pass=osboxes.org"  # execute playbook for 1 server
 ansible-playbook playbook.yml --extra-vars "ansible_sudo_pass=osboxes.org"            # execute playbook with password
 ```
