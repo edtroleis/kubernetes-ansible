@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VMS=('k8s-master' 'k8s-worker1' 'k8s-worker2' 'kube-master' 'kube-worker1' 'kube-worker2')
+VMS=('k8s-master' 'k8s-worker1' 'k8s-worker2')
 
 printf "\n# Ansible hosts\n" >> /etc/hosts
 

@@ -10,7 +10,7 @@ VM_BASE_DIR_LNX="/mnt/e/VirtualBoxVMs"
 
 VM_BASE_DIR_WIN="E:\VirtualBoxVMs"
 
-VMS=('k-master' 'k-worker1' 'k-worker2')
+VMS=('k8s-master' 'k8s-worker1' 'k8s-worker2')
 
 if [ ! -d $BASE_IMAGE_DIR ] 
 then
