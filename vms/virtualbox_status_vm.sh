@@ -5,7 +5,7 @@
 
 STATUS=$1
 
-VMS=('k8s-master' 'k8s-worker1' 'k8s-worker2')
+VMS=('kube-master' 'kube-worker1' 'kube-worker2')
  
 for vm in "${VMS[@]}"
 do

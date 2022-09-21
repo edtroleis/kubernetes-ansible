@@ -24,19 +24,19 @@ if [ ! -f $BASE_IMAGE_DIR/$BASE_IMAGE_NAME ]; then
   tar -zxvf $BASE_IMAGE_DIR/${GDRIVE_FILENAME} -C $BASE_IMAGE_DIR
 fi
 
-#Create VM
+# Create VM
 VBoxManage.exe createvm --name $MACHINENAME --ostype "Ubuntu_64" --register --basefolder $VM_BASE_DIR_WIN
 
 # Create disk and connect
 # Chage uuid disk to create vms using images from osboxes
-if [ ! -f $VM_BASE_DIR_LNX_LNX/$vm/$DISK_VDI ]; then
-  cp $BASE_IMAGE_DIR/$BASE_IMAGE_NAME $VM_BASE_DIR_LNX_LNX/$vm/$DISK_VDI
-  VBoxManage.exe internalcommands sethduuid "$VM_BASE_DIR_LNX_WIN\\$vm\\$DISK_VDI"
+if [ ! -f $VM_BASE_DIR_LNX/$vm/$DISK_VDI ]; then
+  cp $BASE_IMAGE_DIR/$BASE_IMAGE_NAME $VM_BASE_DIR_LNX/$MACHINENAME/$DISK_VDI
+  VBoxManage.exe internalcommands sethduuid "$VM_BASE_DIR_WIN\\$MACHINENAME\\$DISK_VDI"
 fi
 
 # Connect disk
 VBoxManage.exe storagectl $MACHINENAME --name "SATA Controller" --add sata --controller IntelAhci
-VBoxManage.exe storageattach $MACHINENAME --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$VM_BASE_DIR_WIN\\$vm\\$DISK_VDI"
+VBoxManage.exe storageattach $MACHINENAME --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$VM_BASE_DIR_WIN\\$MACHINENAME\\$DISK_VDI"
 
 # Geral
 VBoxManage.exe modifyvm $MACHINENAME --draganddrop bidirectional \
