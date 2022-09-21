@@ -44,12 +44,12 @@ or
 cat /etc/hosts                                  # check hosts on /etc/hosts file
 ```
 
-## 4. Create ssh key on Ansible server
+## 3. Create ssh key on Ansible server
 ```
 ssh-keygen -f ~/.ssh/key_ansible
 ```
 
-## 5. Copy publick key Ansible server to Ansible hosts
+## 4. Copy public key Ansible server to Ansible hosts
 ```
 ssh-copy-id osboxes@k8s-master
 ssh-copy-id osboxes@k8s-worker1
@@ -68,14 +68,14 @@ do
 done
 ```
 
-## 6. Check connectiviy
+## 5. Check connectiviy
 ```
 ansible -i k8s-master,k8s-worker1,k8s-worker2 all -m ping --user osboxes
 ```
 
-## 7. Configure Ansible inventory
+## 6. Configure Ansible inventory
 ```
-cat > /etc/hosts <<EOF
+cat > /etc/ansible/hosts <<EOF
 [masters]
 master ansible_host=k8s-master ansible_user=osboxes
 
@@ -88,22 +88,23 @@ ansible_python_interpreter=/usr/bin/python3
 EOF
 ```
 
-## 8. List inventory
+## 7. List inventory
 ```
 ansible-inventory --list -y
 ```
 
-## 9. Ping all hosts
+## 8. Ping all hosts
 ```
 ansible all -m ping
 ```
 
-## 10. Run playbooks
+## 9. Run playbooks
 1. [setup.yml](./playbooks/setup.yml)
 2. [master-node.yml](./playbooks/master-node.yml)
 3. [worker-node.yml](./playbooks/worker-nodes.yml)
 
 ```
+cd playbooks
 ansible-playbook setup.yml              # install and configure 3 vms
 ansible-playbook master-node.yml        # create Kubernetes cluster
 ansible-playbook worker-nodes.yml       # add worker nodes to cluster Kubernetes
